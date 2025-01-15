@@ -1,14 +1,15 @@
-from flask import jsonify
 from ultralytics import YOLO
 import os
 import cv2
 
 from services.findBorderBox import findBorderBox
+from services.PerspectiveTransform import PerspectiveTransform
 
 def cropLicensePlate():
     try:
         
         Crop_License_Plate_model = YOLO('../models/YOLO_crop.pt')
+        Crop_letter_model = YOLO('../models/YOLO_read.pt')
         
         image_path = "upload_folder/upload_Photo.jpg"
         original_image = cv2.imread(image_path)
@@ -51,12 +52,29 @@ def cropLicensePlate():
                 "y2": y2
             })
             
+            cropped_xy = [y1, y2, x1, x2]
+            letter_results = Crop_letter_model.predict(resized_image)
+            all_letter_boxes = findBorderBox(letter_results, Crop_letter_model)
+            all_letter_boxes.sort(key=lambda box: (box[0], box[1]))  # เรียงตาม x1 และ y1 
+            xx1 = all_letter_boxes[0][0] - 10
+            yy1 = all_letter_boxes[0][1] - 10
+            xx2 = all_letter_boxes[-1][2] + 10
+            yy2 = all_letter_boxes[0][1] - 10
+            if abs(yy1 - yy2) <= 55:
+                per_img = resized_image
+            elif yy1 > yy2:
+                dif = yy1 - yy2    
+                per_img = PerspectiveTransform(image_path, cropped_xy, xx1, yy1, xx2, yy2 - 20, xx1, 400, xx2, 400 - dif - 20)
+            else:
+                dif = yy2 - yy1
+                per_img = PerspectiveTransform(image_path, cropped_xy, xx1, yy1 - 20, xx2, yy2, xx1, 400 - dif - 20, xx2, 400)
+            
             #save cropped and resize img
             cropped_folder = 'cropped_folder'
             os.makedirs(cropped_folder, exist_ok=True)  # สร้างโฟลเดอร์หากยังไม่มี
             file_path = os.path.join(cropped_folder, f"License_plate_{i}.jpg")
-            cv2.imwrite(file_path, resized_image)  
-               
+            cv2.imwrite(file_path, per_img)  
+        
         return result
     except Exception as e:
         print(e)
