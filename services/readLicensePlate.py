@@ -1,4 +1,19 @@
 from flask import jsonify
 
-def readLicensePlate():
-    return jsonify(message="hello World")
+from services.handleImage import handleImage
+from services.cropLicensePlate import cropLicensePlate
+from services.yoloRead import yoloRead
+def readLicensePlate(request):
+    try:
+        handleImage(request) #save image
+        
+        #crop image
+        crop_result = cropLicensePlate()
+        if len(crop_result) == 0:
+            return jsonify({'massage':"can't detect license plate"})
+        
+        result = yoloRead()
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({"error":str(e)}), 500
