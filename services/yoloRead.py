@@ -1,6 +1,5 @@
 from ultralytics import YOLO
 import os
-import cv2
 
 from services.matchLabel.map_label import map_label
 from services.matchLabel.map_province import map_province
@@ -115,7 +114,7 @@ def yoloRead():
                     }
                 )
         
-        # os.remove(image_path)
+        os.remove(image_path)
         os.remove(os.path.join('upload_folder', 'upload_Photo.jpg'))
         return result
                 

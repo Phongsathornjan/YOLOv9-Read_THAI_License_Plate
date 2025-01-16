@@ -58,8 +58,8 @@ def cropLicensePlate():
             all_letter_boxes.sort(key=lambda box: (box[0], box[1]))  # เรียงตาม x1 และ y1 
             xx1 = all_letter_boxes[0][0] - 10
             yy1 = all_letter_boxes[0][1] - 10
-            xx2 = all_letter_boxes[-1][2] + 10
-            yy2 = all_letter_boxes[0][1] - 10
+            xx2 = all_letter_boxes[len(all_letter_boxes)-1][2]+10
+            yy2 = all_letter_boxes[len(all_letter_boxes)-1][1]-10
             if abs(yy1 - yy2) <= 55:
                 per_img = resized_image
             elif yy1 > yy2:
