@@ -6,9 +6,7 @@ from services.yoloRead import yoloRead
 import time
 def readLicensePlate(request):
     try:
-        
-        start_time = time.time()
-        
+    
         handleImage(request) #save image
         
         #crop image
@@ -17,10 +15,6 @@ def readLicensePlate(request):
             return jsonify({'message':"can't detect license plate"})
         
         result = yoloRead()
-        
-        end_time = time.time()
-        process_time = end_time - start_time
-        print("time : "+str(process_time))
         
         return jsonify(result)
         
