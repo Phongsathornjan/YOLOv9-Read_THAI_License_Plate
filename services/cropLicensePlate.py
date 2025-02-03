@@ -14,7 +14,7 @@ def cropLicensePlate():
         image_path = "upload_folder/upload_Photo.jpg"
         original_image = cv2.imread(image_path)
         
-        Crop_results = Crop_License_Plate_model.predict(original_image)
+        Crop_results = Crop_License_Plate_model.predict(original_image,device=0)
         
         all_boxes_plate = findBorderBox(Crop_results, Crop_License_Plate_model)
         
@@ -53,7 +53,7 @@ def cropLicensePlate():
             })
             
             cropped_xy = [y1, y2, x1, x2]
-            letter_results = Crop_letter_model.predict(resized_image)
+            letter_results = Crop_letter_model.predict(resized_image,device=0)
             all_letter_boxes = findBorderBox(letter_results, Crop_letter_model)
             all_letter_boxes.sort(key=lambda box: (box[0], box[1]))  # เรียงตาม x1 และ y1 
             xx1 = all_letter_boxes[0][0] - 10
