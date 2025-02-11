@@ -7,7 +7,7 @@ from services.matchLabel.map_province import map_province
 def yoloRead():
     try:
         result = []
-        read_license_model = YOLO('../models/YOLO_read.pt',device=0)
+        read_license_model = YOLO('../models/YOLO_read.pt')
         
         #loop in cropped folder
         cropped_folder = 'cropped_folder'
@@ -17,7 +17,7 @@ def yoloRead():
             image_path = os.path.join(cropped_folder, filename)
             
             #use YOLO_read model
-            results = read_license_model(image_path)
+            results = read_license_model.predict(image_path,device=0)
             
             #handle result
             

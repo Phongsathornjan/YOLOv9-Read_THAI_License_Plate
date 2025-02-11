@@ -69,11 +69,14 @@ def cropLicensePlate():
                 dif = yy2 - yy1
                 per_img = PerspectiveTransform(image_path, cropped_xy, xx1, yy1 - 20, xx2, yy2, xx1, 400 - dif - 20, xx2, 400)
             
+            gray = cv2.cvtColor(per_img, cv2.COLOR_BGR2GRAY)
+            eq = cv2.equalizeHist(gray)
+            
             #save cropped and resize img
             cropped_folder = 'cropped_folder'
             os.makedirs(cropped_folder, exist_ok=True)  # สร้างโฟลเดอร์หากยังไม่มี
             file_path = os.path.join(cropped_folder, f"License_plate_{i}.jpg")
-            cv2.imwrite(file_path, per_img)  
+            cv2.imwrite(file_path, eq)  
         
         return result
     except Exception as e:
