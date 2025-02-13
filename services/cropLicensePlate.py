@@ -55,6 +55,8 @@ def cropLicensePlate():
             cropped_xy = [y1, y2, x1, x2]
             letter_results = Crop_letter_model.predict(resized_image,device=0)
             all_letter_boxes = findBorderBox(letter_results, Crop_letter_model)
+            if len(all_letter_boxes) == 0:
+               break
             all_letter_boxes.sort(key=lambda box: (box[0], box[1]))  # เรียงตาม x1 และ y1 
             xx1 = all_letter_boxes[0][0] - 10
             yy1 = all_letter_boxes[0][1] - 10
