@@ -7,14 +7,16 @@ from services.matchLabel.map_province import map_province
 def yoloRead():
     try:
         result = []
-        read_license_model = YOLO('../models/YOLO_read.pt')
+        current_directory = os.getcwd()
+        model_path = os.path.join(current_directory, 'models', 'YOLO_read.pt')
+        read_license_model = YOLO(model_path)
         
         #loop in cropped folder
         cropped_folder = 'cropped_folder'
         for i, filename in enumerate(os.listdir(cropped_folder)):
             
             #load image path
-            image_path = os.path.join(cropped_folder, filename)
+            image_path = os.path.join(current_directory,cropped_folder, filename)
             
             #use YOLO_read model
             results = read_license_model.predict(image_path,device=0)
@@ -26,7 +28,7 @@ def yoloRead():
             
             #ถ้าไม่เจอตัวอักษร
             if len(results[0].boxes.xyxy) == 0:
-                return []
+                return [{"error": "No characters detected"}]
             
             #ถ้าเจอตัวอักษร
             haveProvince = 0  #detect เจอกี่จังหวัด
@@ -120,3 +122,4 @@ def yoloRead():
                 
     except Exception as e:
         print(e)
+        return [{"error": "No characters detected"}]

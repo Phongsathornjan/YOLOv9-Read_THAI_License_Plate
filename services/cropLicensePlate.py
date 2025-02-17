@@ -7,36 +7,24 @@ from services.PerspectiveTransform import PerspectiveTransform
 
 def cropLicensePlate():
     try:
+        current_directory = os.getcwd()
         
-        Crop_License_Plate_model = YOLO('../models/YOLO_crop.pt')
-        Crop_letter_model = YOLO('../models/YOLO_read.pt')
+        Crop_License_Plate_model = YOLO(os.path.join(current_directory, 'models', 'YOLO_crop.pt'))
+        Crop_letter_model = YOLO(os.path.join(current_directory, 'models', 'YOLO_read.pt'))
         
         image_path = "upload_folder/upload_Photo.jpg"
         original_image = cv2.imread(image_path)
+        if original_image is None:
+            return False , {'error':e, f'message' : "can't rear image at {image_path}"} , {'error': 'can\'t detect license plate'}
         
         Crop_results = Crop_License_Plate_model.predict(original_image,device=0)
         
         all_boxes_plate = findBorderBox(Crop_results, Crop_License_Plate_model)
         
-        # ถ้าไม่พบป้ายทะเบียน ให้ซูมเข้าและตรวจจับอีกครั้ง
         if len(all_boxes_plate) == 0:
-            scale = 1.2
-            h, w = original_image.shape[:2]
-            center_x, center_y = w // 2, h // 2
-            new_w, new_h = int(w / scale), int(h / scale)
-
-            zoom_image = original_image[center_y - new_h // 2:center_y + new_h // 2,
-                            center_x - new_w // 2:center_x + new_w // 2]
-            if zoom_image.size == 0:
-                print("Error: Cropped image is empty.")
-                return []
-
-            original_image = zoom_image
-            Crop_results = Crop_License_Plate_model.predict(original_image)
-            all_boxes_plate = findBorderBox(Crop_results, Crop_License_Plate_model)
             
             if len(all_boxes_plate) == 0:
-                return []
+                return False , {'message':"can't detect license plate"} , {'error': 'can\'t detect license plate'}
             
         result = []
         # อ่านข้อมูลจากกรอบที่ครอบแต่ละกรอบ
@@ -80,7 +68,7 @@ def cropLicensePlate():
             file_path = os.path.join(cropped_folder, f"License_plate_{i}.jpg")
             cv2.imwrite(file_path, eq)  
         
-        return result
+        return True , {'status':"detected"} , result
     except Exception as e:
-        print(e)
+        return False , {'error':e} , {'error': 'can\'t detect license plate'}
         
