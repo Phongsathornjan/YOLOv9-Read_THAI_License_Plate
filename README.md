@@ -98,7 +98,7 @@ API นี้ใช้สำหรับอัปโหลดรูปภาพ�
     "error": "No selected file"
 }
 ```
-JSON response<br>
-![image](https://github.com/user-attachments/assets/83b6db81-f486-43e8-9e3a-6183830110b0)
+
+canva Presentation : https://www.canva.com/design/DAGaKlsypvQ/pN-zAP3yQhQi_xG8SDNong/edit?utm_content=DAGaKlsypvQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
 
 
