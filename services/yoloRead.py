@@ -115,8 +115,7 @@ def yoloRead():
                     "province": province['class_name']
                     }
                 )
-        
-        os.remove(image_path)
+            os.remove(image_path)
         os.remove(os.path.join('upload_folder', 'upload_Photo.jpg'))
         return result
                 
